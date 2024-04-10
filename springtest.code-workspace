@@ -1,0 +1,16 @@
+{
+    "folders": [
+        {
+            "path": "../springform_p/springform"
+        },
+        {
+            "path": "../test_springform"
+        },
+        {
+            "path": "."
+        },
+        {
+            "path": "../springtest_test"
+        }
+    ]
+}
