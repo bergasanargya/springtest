@@ -1,12 +1,12 @@
 import inspect
-import greetings
+import dill
 
 class GreetingSerializer:
     @staticmethod
-    def extract_source(file_path, properties=None, methods=None):
+    def extract_source(original, file_path, properties=None, methods=None):
         """Extracts and prints the source code of the greetings module"""
         # Get the source code of the greetings module
-        source_code = inspect.getsource(greetings)
+        source_code = inspect.getsource(original)
 
         # Add properties if provided
         if properties:
@@ -18,24 +18,26 @@ class GreetingSerializer:
             for _, method_func in methods.items(): #method_name
                 source_code += f"\n\n{inspect.getsource(method_func)}"
 
+        print(source_code)
         with open(file_path, 'w') as file:
             file.write(source_code)
 
     @staticmethod
     def add_properties_and_methods(original_class, properties=None, methods=None):
-        # Create a new class that inherits from the original class
-        class NewClass(original_class):
-            pass
-
+        # # Create a new class that inherits from the original class
+        # class NewClass(original_class):
+        #     pass
+        deserialized = dill.load(original_class)
         # Add properties if provided
         if properties:
             for prop_name, prop_value in properties.items():
-                setattr(NewClass, prop_name, prop_value)
+                setattr(deserialized, prop_name, prop_value)
 
         # Add methods if provided
         if methods:
             for method_name, method_func in methods.items():
                 # Set the function as a class attribute
-                setattr(NewClass, method_name, method_func)
+                setattr(deserialized, method_name, method_func)
 
-        return NewClass
+        modified_module = dill.dumps(deserialized)
+        return modified_module
